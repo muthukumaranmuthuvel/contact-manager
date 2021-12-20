@@ -12,6 +12,7 @@ function ContactAdd({addContact}) {
         setname("");
         setEmail("");
     }
+    
     return (
         <div >
              <div className="relative my-4 mb-8 border-b-2 focus-within:border-blue-500">
