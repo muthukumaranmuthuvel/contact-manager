@@ -2,6 +2,12 @@
 // import './App.css';
 import {useState, useEffect} from "react";
 import {v4 as uuidv4} from 'uuid';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link
+} from 'react-router-dom';
 import ContactAdd from "./ContactAdd"
 import DisplayContact from "./DisplayContact";
 //import Form from "./Form";
@@ -31,14 +37,16 @@ useEffect(() => {
 
   return (
     <div>
-     <div className="p-6 max-w-sm mx-auto rounded-xl shadow-lg flex items-center space-x-4">
-      <ContactAdd addContact={addContact} />
-      </div>
-      <div className="contactdetails">
-            { contactdetails.map((contact)=>(
-                <DisplayContact key={contact.id} id={contact.id} name={contact.name} email={contact.email} removeContact={removeContact}/>
-            ))}
-      </div>
+      <Router>
+        <Routes>
+          <Route exact path='/' element={
+          <div className="p-6 max-w-sm mx-auto rounded-xl shadow-lg flex items-center space-x-4">
+          <ContactAdd addContact={addContact} />
+          </div>
+          }></Route>
+          <Route exact path='/list' element={<DisplayContact contactdetails={contactdetails} removeContact={removeContact}/>}/>
+      </Routes>
+      </Router>
     </div>
   );
 }
