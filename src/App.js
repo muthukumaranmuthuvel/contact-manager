@@ -6,33 +6,66 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link
 } from 'react-router-dom';
 import ContactAdd from "./ContactAdd"
 import DisplayContact from "./DisplayContact";
 import ContactCard from "./ContactCard";
+import api from './api/contacts';
+import EditAdd from "./EditAdd";
 //import Form from "./Form";
 function App() {
   const [contactdetails,setcontactdetails]=useState([]);
   
-const addContact = (name,email) =>{
-    console.log("inside addcontact")
-    setcontactdetails([...contactdetails,{id:uuidv4(),...{name,email}}])
+//retrival contacts
+const retriveContacts = async () =>{
+  const response = await api.get("/contacts");
+  
+  return response.data;
+
+} 
+useEffect(() => {
+  // const retriveContacts = JSON.parse(localStorage.getItem("Contacts"))
+  //  if(retriveContacts)setcontactdetails(retriveContacts)
+  const getAllContacts = async ()=>{
+    const allcontacts = await retriveContacts();
+    if(allcontacts) setcontactdetails(allcontacts);
+  }
+  getAllContacts();
+
+ }, []);
+const addContact = async (name,email) =>{
+  const request ={
+    id:uuidv4(),
+    ...{name,email}
+  };
+  const response = await api.post("/contacts", request )
+  setcontactdetails([...contactdetails,response.data])
 }
 
-const removeContact =(id)=>{
+const updateContact = async(name,email,id)=>{
+const request ={
+  ...{name,email}
+}
+const response =await api.put(`/contacts/${id}`,request)
+
+setcontactdetails(
+  contactdetails.map((contact)=>{
+  return contact.id==id?{...response.data}:contact;
+})
+)
+}
+
+const removeContact =async (id)=>{
+  await api.delete(`/contacts/${id}`)
   const updatedContact=contactdetails.filter((contact)=>{
     return contact.id!=id
   })
   setcontactdetails(updatedContact)
 }
-useEffect(() => {
-  const retriveContacts = JSON.parse(localStorage.getItem("Contacts"))
-   if(retriveContacts)setcontactdetails(retriveContacts)
- }, [])
+
 
 useEffect(() => {
-  localStorage.setItem("Contacts",JSON.stringify(contactdetails))
+  //localStorage.setItem("Contacts",JSON.stringify(contactdetails))
 }, [contactdetails])
 
 
@@ -47,6 +80,7 @@ useEffect(() => {
           }></Route>
           <Route exact path='/list' element={<DisplayContact contactdetails={contactdetails} removeContact={removeContact}/>}/>
           <Route exact path="/contact/:id" element={<ContactCard/>}/>
+          <Route exact path="/edit" element={<EditAdd updateContact={updateContact} />}/>
       </Routes>
       </Router>
     </div>
