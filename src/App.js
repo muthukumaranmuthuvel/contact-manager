@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom';
 import ContactAdd from "./ContactAdd"
 import DisplayContact from "./DisplayContact";
+import ContactCard from "./ContactCard";
 //import Form from "./Form";
 function App() {
   const [contactdetails,setcontactdetails]=useState([]);
@@ -40,11 +41,12 @@ useEffect(() => {
       <Router>
         <Routes>
           <Route exact path='/' element={
-          <div className="p-6 max-w-sm mx-auto rounded-xl shadow-lg flex items-center space-x-4">
+          <div>
           <ContactAdd addContact={addContact} />
           </div>
           }></Route>
           <Route exact path='/list' element={<DisplayContact contactdetails={contactdetails} removeContact={removeContact}/>}/>
+          <Route exact path="/contact/:id" element={<ContactCard/>}/>
       </Routes>
       </Router>
     </div>
