@@ -1,16 +1,19 @@
-import React,{useState}  from 'react'
+import React,{useState, useRef}  from 'react'
 import "./DisplayContact.css";
 import {Link } from "react-router-dom"
 import Modal from './Modal';
 
-function DisplayContact({contactdetails, removeContact}) {
+function DisplayContact({contactdetails, removeContact,searchTerm,searchHandler}) {
   const [show,setShow] = useState(false);
+  const Inputref = useRef();
   const[deleteItem,setDeleteItem]=useState("");
   const removeContactHandler=(id)=>{
     removeContact(id)
     
   }
- 
+ const searchContact =() =>{
+   searchHandler(Inputref.current.value)
+ }
   const createList = contactdetails.map((contact)=>{
     
     return(
@@ -39,18 +42,19 @@ function DisplayContact({contactdetails, removeContact}) {
   })
     return (
       <div className="flex flex-col justify-center items-center">
-         
-          {!show && <Link to="/">
+        {!show && <Link to="/">
             <button className="bg-green-500 hover:bg-green-700 text-white font-bold w-96 mx-auto my-4 py-2 px-4 rounded-full ">Add Contact</button>
           </Link> }
-          
-          {!show && createList}
+          {!show && <div className="pt-2 relative mx-auto text-gray-600">
+            <input ref={Inputref} className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
+            type="search" name="search" placeholder="Search" value={searchTerm} onChange={searchContact}/>
+          </div>}
+          {!show &&  createList}
           {show && <Modal 
           close={setShow} 
           deleteItem={deleteItem} 
           setDeleteItem={setDeleteItem} 
           removeContactHandler={removeContactHandler}/>}
-          
       </div>
     )
 }

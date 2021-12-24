@@ -15,7 +15,8 @@ import EditAdd from "./EditAdd";
 //import Form from "./Form";
 function App() {
   const [contactdetails,setcontactdetails]=useState([]);
-  
+  const [searchTerm,setSearchTerm]=useState("");
+  const [searchContact,setSearchContact]=useState([]);
 //retrival contacts
 const retriveContacts = async () =>{
   const response = await api.get("/contacts");
@@ -68,7 +69,14 @@ useEffect(() => {
   //localStorage.setItem("Contacts",JSON.stringify(contactdetails))
 }, [contactdetails])
 
-
+const searchHandler =(term)=>{
+  setSearchTerm(term);
+  const searchList = contactdetails.filter((contact)=>{
+    return Object.values(contact).join("").toLocaleLowerCase().includes(term)
+  })
+  setSearchContact(searchList)
+  
+}
   return (
     <div>
       <Router>
@@ -78,7 +86,12 @@ useEffect(() => {
           <ContactAdd addContact={addContact} />
           </div>
           }></Route>
-          <Route exact path='/list' element={<DisplayContact contactdetails={contactdetails} removeContact={removeContact}/>}/>
+          <Route exact path='/list' element={<DisplayContact 
+          contactdetails={searchTerm.length < 1 ? contactdetails : searchContact} 
+          removeContact={removeContact} 
+          searchTerm={searchTerm} 
+          searchHandler={searchHandler} 
+          searchContact={searchContact}/>}/>
           <Route exact path="/contact/:id" element={<ContactCard/>}/>
           <Route exact path="/edit" element={<EditAdd updateContact={updateContact} />}/>
       </Routes>
